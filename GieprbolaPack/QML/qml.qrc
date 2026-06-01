@@ -1,0 +1,23 @@
+<RCC>
+	<qresource prefix="/qt/qml/gieprbolapack">
+		<file>Main.qml</file>
+		<file>MainLayout.qml</file>
+
+		<file>Components/TopMenu/TopMenu.qml</file>
+		<file>Components/TopMenu/TopMenuButton.qml</file>
+
+		<file>Components/ActionToolbar/ActionToolbar.qml</file>
+		<file>Components/ActionToolbar/ActionToolbarButton.qml</file>
+
+		<file>Components/PathBar/PathBar.qml</file>
+
+		<file>Components/FileTable/FileTable.qml</file>
+		
+		<file>Components/BottomStatusBar/BottomStatusBar.qml</file>
+
+		<file>../Resources/Icon.png</file>
+		
+		<file>../Resources/Add.png</file>
+		<file>../Resources/Extract.png</file>
+	</qresource>
+</RCC>
