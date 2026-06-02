@@ -8,6 +8,18 @@ Rectangle {
     border.color: "#323232"
     border.width: 1
 
+    ArchiveDialog {
+        id: archiveDialog
+
+        onAccepted: function(archiveName) {
+            FileSystemModel.create_archive(archiveName)
+        }
+
+        onRejected: {
+            console.log("Create archive canceled")
+        }
+    }
+
     RowLayout {
         anchors.fill: parent
         anchors.leftMargin: 32
@@ -20,7 +32,7 @@ Rectangle {
             tooltipText: "Add files to archive"
 
             onClicked: {
-                console.log("Add")
+                archiveDialog.open_dialog()
             }
         }
 

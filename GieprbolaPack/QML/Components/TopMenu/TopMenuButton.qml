@@ -23,7 +23,7 @@ Rectangle {
         id: label
         anchors.centerIn: parent
         color: "#E0E0E0"
-        font.pixelSize: 14
+        font.pixelSize: 15
     }
 
     MouseArea {

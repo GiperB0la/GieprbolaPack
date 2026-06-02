@@ -44,6 +44,15 @@
     <ClCompile Include="UI\FileSystemModel\src\FileSystemModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Services\FileSelection\src\FileSelection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Services\FileDirectoryLoader\src\FileDirectoryLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ZipEditor\src\ZipWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="QML\MainLayout.qml">
@@ -73,6 +82,12 @@
     <None Include="QML\components\PathBar\PathBarButton.qml">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="QML\Components\ActionToolbar\ArchiveDialog.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="QML\Components\ActionToolbar\ArchiveDialogButton.qml">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\ArchiveEditor\Archive\include\Archive.hpp">
@@ -85,6 +100,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\FileScanner\include\FileScanner.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Services\FileSelection\include\FileSelection.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Services\FileDirectoryLoader\include\FileDirectoryLoader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ZipEditor\include\ZipWriter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">

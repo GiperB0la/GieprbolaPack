@@ -112,10 +112,15 @@
     <ClCompile Include="Core\ArchiveEditor\Archive\src\Archive.cpp" />
     <ClCompile Include="Core\Checksum\src\Checksum.cpp" />
     <ClCompile Include="Core\FileScanner\src\FileScanner.cpp" />
+    <ClCompile Include="Core\ZipEditor\src\ZipWriter.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="UI\Services\FileDirectoryLoader\src\FileDirectoryLoader.cpp" />
+    <ClCompile Include="UI\Services\FileSelection\src\FileSelection.cpp" />
     <ClCompile Include="UI\FileSystemModel\src\FileSystemModel.cpp" />
     <None Include="QML\components\ActionToolbar\ActionToolbar.qml" />
     <None Include="QML\components\ActionToolbar\ActionToolbarButton.qml" />
+    <None Include="QML\Components\ActionToolbar\ArchiveDialog.qml" />
+    <None Include="QML\Components\ActionToolbar\ArchiveDialogButton.qml" />
     <None Include="QML\Components\BottomStatusBar\BottomStatusBar.qml" />
     <None Include="QML\components\FileTable\FileTable.qml" />
     <None Include="QML\components\PathBar\PathBar.qml" />
@@ -131,7 +136,10 @@
     <ClInclude Include="Core\ArchiveEditor\Archive\include\Archive.hpp" />
     <ClInclude Include="Core\Checksum\include\Checksum.hpp" />
     <ClInclude Include="Core\FileScanner\include\FileScanner.hpp" />
+    <ClInclude Include="Core\ZipEditor\include\ZipWriter.hpp" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="UI\Services\FileDirectoryLoader\include\FileDirectoryLoader.hpp" />
+    <ClInclude Include="UI\Services\FileSelection\include\FileSelection.hpp" />
     <QtMoc Include="UI\FileSystemModel\include\FileSystemModel.hpp" />
   </ItemGroup>
   <ItemGroup>

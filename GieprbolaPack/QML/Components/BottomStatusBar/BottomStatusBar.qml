@@ -11,13 +11,16 @@ Rectangle {
         anchors.rightMargin: 10
 
         Label {
-            text: "Folders: " + FileSystemModel.folderCount +
-                  " | Files: " + FileSystemModel.fileCount +
-                  " | Size: " + FileSystemModel.totalSizeText +
-                  " | Selected folders: " + FileSystemModel.selectedFolderCount +
-                  " | Selected files: " + FileSystemModel.selectedFileCount
+            text:
+                qsTr("%1 folders • %2 files • %3   |   Selected: %4 folders, %5 files")
+                    .arg(FileSystemModel.folderCount)
+                    .arg(FileSystemModel.fileCount)
+                    .arg(FileSystemModel.totalSizeText)
+                    .arg(FileSystemModel.selectedFolderCount)
+                    .arg(FileSystemModel.selectedFileCount)
 
-            color: "#cccccc"
+            color: "#bdbdbd"
+            font.pixelSize: 13
         }
 
         Item {
@@ -26,7 +29,8 @@ Rectangle {
 
         Label {
             text: FileSystemModel.statusText
-            color: "#cccccc"
+            color: "#bdbdbd"
+            font.pixelSize: 13
         }
     }
 }

@@ -73,7 +73,7 @@ QVariant FileSystemModel::data(const QModelIndex& index, int role) const
 
     case FileCheckedRole: {
         const QString path = QString::fromStdWString(file.full_path.wstring());
-        return selected_paths_.contains(path);
+        return selection_.is_selected(path);
     }
 
     case FileFullPathRole: {
@@ -100,12 +100,7 @@ bool FileSystemModel::setData(const QModelIndex& index, const QVariant& value, i
 
     const bool checked = value.toBool();
 
-    if (checked) {
-        selected_paths_.insert(path);
-    }
-    else {
-        selected_paths_.remove(path);
-    }
+    selection_.set_selected(path, checked);
 
     update_selection_stats();
 
@@ -148,29 +143,23 @@ void FileSystemModel::set_current_path(const QString& path)
         return;
     }
 
-    const auto fs_path = std::filesystem::path(path.toStdWString());
+    const DirectoryLoadResult result = directory_loader_.load(path);
 
-    if (!std::filesystem::exists(fs_path)) {
-        status_text_ = tr("Path not found");
-        emit stats_changed();
-        return;
-    }
-
-    if (!std::filesystem::is_directory(fs_path)) {
-        status_text_ = tr("It's not a folder");
+    if (!result.success) {
+        status_text_ = result.error_text;
         emit stats_changed();
         return;
     }
 
     beginResetModel();
 
-    selected_paths_.clear();
+    selection_.clear();
 
-    update_selection_stats();
-
-    files_ = FileScanner::instance().scan(fs_path);
+    files_ = result.files;
     current_path_ = path;
+
     update_stats();
+    update_selection_stats();
 
     endResetModel();
 
@@ -241,16 +230,16 @@ QString FileSystemModel::format_size(uint64_t bytes) const
 
 QStringList FileSystemModel::selected_paths() const
 {
-    return QStringList(selected_paths_.begin(), selected_paths_.end());
+    return selection_.selected_paths();
 }
 
 void FileSystemModel::clear_selection()
 {
-    if (selected_paths_.isEmpty()) {
+    if (selection_.empty()) {
         return;
     }
 
-    selected_paths_.clear();
+    selection_.clear();
 
     update_selection_stats();
 
@@ -302,7 +291,7 @@ void FileSystemModel::update_selection_stats()
     for (const auto& file : files_) {
         const QString path = QString::fromStdWString(file.full_path.wstring());
 
-        if (!selected_paths_.contains(path)) {
+        if (!selection_.is_selected(path)) {
             continue;
         }
 
@@ -315,4 +304,52 @@ void FileSystemModel::update_selection_stats()
     }
 
     emit selection_changed();
+}
+
+void FileSystemModel::create_archive(const QString& archive_name)
+{
+    const QStringList selected = selected_paths();
+
+    if (selected.empty()) {
+        status_text_ = tr("No files selected");
+        emit stats_changed();
+        return;
+    }
+
+    std::vector<std::filesystem::path> files;
+    files.reserve(selected.size());
+
+    for (const QString& path : selected) {
+        const std::filesystem::path fs_path = path.toStdWString();
+
+        if (std::filesystem::is_regular_file(fs_path)) {
+            files.push_back(fs_path);
+        }
+    }
+
+    if (files.empty()) {
+        status_text_ = tr("No regular files selected");
+        emit stats_changed();
+        return;
+    }
+
+    std::filesystem::path archive_path =
+        std::filesystem::path(current_path_.toStdWString()) /
+        archive_name.toStdWString();
+
+    try {
+        ZipWriter::instance().create_archive(
+            archive_path,
+            files,
+            ZipWriter::CompressionMode::Store
+        );
+
+        status_text_ = tr("Archive created");
+        clear_selection();
+    }
+    catch (const std::exception& error) {
+        status_text_ = QString::fromUtf8(error.what());
+    }
+
+    emit stats_changed();
 }

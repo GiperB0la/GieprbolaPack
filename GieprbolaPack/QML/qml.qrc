@@ -8,6 +8,8 @@
 
 		<file>Components/ActionToolbar/ActionToolbar.qml</file>
 		<file>Components/ActionToolbar/ActionToolbarButton.qml</file>
+		<file>Components/ActionToolbar/ArchiveDialog.qml</file>
+		<file>Components/ActionToolbar/ArchiveDialogButton.qml</file>
 
 		<file>Components/PathBar/PathBar.qml</file>
 

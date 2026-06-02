@@ -7,6 +7,10 @@
 #include <QSet>
 
 #include "../../../Core/FileScanner/include/FileScanner.hpp"
+#include "../../../Core/ZipEditor/include/ZipWriter.hpp"
+
+#include "../../Services/FileSelection/include/FileSelection.hpp"
+#include "../../Services/FileDirectoryLoader/include/FileDirectoryLoader.hpp"
 
 class FileSystemModel : public QAbstractListModel
 {
@@ -50,6 +54,8 @@ private:
 public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant data(const QModelIndex& index, int role) const override;
+    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
+    Qt::ItemFlags flags(const QModelIndex& index) const override;
     QHash<int, QByteArray> roleNames() const override;
 
 public:
@@ -66,9 +72,11 @@ public:
     int selected_file_count() const;
 
     Q_INVOKABLE QStringList selected_paths() const;
+
     Q_INVOKABLE void clear_selection();
     Q_INVOKABLE void set_checked(int row, bool checked);
     Q_INVOKABLE void toggle_checked(int row);
+    Q_INVOKABLE void create_archive(const QString& archive_name);
 
 signals:
     void current_path_changed();
@@ -76,13 +84,10 @@ signals:
     void selection_changed();
 
 private:
-    bool setData(const QModelIndex& index, const QVariant& value, int role) override;
-    Qt::ItemFlags flags(const QModelIndex& index) const override;
-
-private:
     void update_stats();
-    QString format_size(uint64_t bytes) const;
     void update_selection_stats();
+
+    QString format_size(uint64_t bytes) const;
 
 public:
     enum Roles {
@@ -99,14 +104,15 @@ private:
 
     std::vector<FileInfo> files_;
 
+    FileSelection selection_;
+    FileDirectoryLoader directory_loader_;
+
     int folder_count_ = 0;
     int file_count_ = 0;
 
     uint64_t total_size_ = 0;
 
     QString status_text_ = tr("Done");
-
-    QSet<QString> selected_paths_;
 
     int selected_folder_count_ = 0;
     int selected_file_count_ = 0;

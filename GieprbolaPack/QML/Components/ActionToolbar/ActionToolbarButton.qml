@@ -53,8 +53,8 @@ Rectangle {
 
             anchors.horizontalCenter: parent.horizontalCenter
 
-            width: 32
-            height: 32
+            width: 36
+            height: 36
 
             fillMode: Image.PreserveAspectFit
 
@@ -71,7 +71,7 @@ Rectangle {
 
             color: "#E0E0E0"
 
-            font.pixelSize: 11
+            font.pixelSize: 12
 
             elide: Text.ElideRight
         }

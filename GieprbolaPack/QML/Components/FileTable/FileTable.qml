@@ -72,7 +72,54 @@ Rectangle {
             clip: true
             model: FileSystemModel
 
-            boundsBehavior: Flickable.StopAtBounds
+            property int selectionAnchor: -1
+
+            function handleSelection(clickedIndex, shiftPressed) {
+                if (shiftPressed && selectionAnchor >= 0) {
+                    const from = Math.min(selectionAnchor, clickedIndex)
+                    const to = Math.max(selectionAnchor, clickedIndex)
+
+                    for (let i = from; i <= to; ++i) {
+                        FileSystemModel.set_checked(i, true)
+                    }
+                } else {
+                    FileSystemModel.toggle_checked(clickedIndex)
+                    selectionAnchor = clickedIndex
+                }
+            }
+
+            boundsBehavior: Flickable.DragOverBounds
+            boundsMovement: Flickable.FollowBoundsBehavior
+            rebound: Transition {
+                NumberAnimation {
+                    properties: "contentY"
+                    duration: 220
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            interactive: true
+            flickableDirection: Flickable.VerticalFlick
+
+            ScrollBar.vertical: ScrollBar {
+                policy: ScrollBar.AsNeeded
+                visible: filesView.contentHeight > filesView.height
+                width: 10
+
+                contentItem: Rectangle {
+                    implicitWidth: 6
+                    radius: 3
+                    color: parent.pressed
+                        ? "#707070"
+                        : parent.hovered
+                            ? "#606060"
+                            : "#505050"
+                }
+
+                background: Rectangle {
+                    color: "#202020"
+                }
+            }
 
             delegate: Rectangle {
                 id: row
@@ -104,15 +151,18 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
 
-                    onClicked: {
-                        FileSystemModel.toggle_checked(index)
+                    onClicked: function(mouse) {
+                        filesView.handleSelection(
+                            index,
+                            mouse.modifiers & Qt.ShiftModifier
+                        )
                     }
                 }
 
                 RowLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 12
-                    anchors.rightMargin: 12
+                    anchors.rightMargin: 18
                     spacing: 0
 
                     CheckBox {
