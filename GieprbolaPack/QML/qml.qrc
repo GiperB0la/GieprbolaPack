@@ -3,6 +3,7 @@
 		<file>Main.qml</file>
 		<file>MainLayout.qml</file>
 
+		
 		<file>Components/TopMenu/TopMenu.qml</file>
 		<file>Components/TopMenu/TopMenuButton.qml</file>
 
@@ -17,9 +18,15 @@
 		
 		<file>Components/BottomStatusBar/BottomStatusBar.qml</file>
 
-		<file>../Resources/Icon.png</file>
 		
+		<file>Styles/TextField.qml</file>
+		<file>Styles/ComboBox.qml</file>
+		<file>Styles/ConfirmDialog.qml</file>
+
+		
+		<file>../Resources/Icon.png</file>
 		<file>../Resources/Add.png</file>
 		<file>../Resources/Extract.png</file>
+		<file>../Resources/Delete.png</file>
 	</qresource>
 </RCC>

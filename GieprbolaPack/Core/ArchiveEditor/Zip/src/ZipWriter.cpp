@@ -1,13 +1,7 @@
 #include "../include/ZipWriter.hpp"
 
 
-ZipWriter& ZipWriter::instance()
-{
-    static ZipWriter writer;
-    return writer;
-}
-
-void ZipWriter::create_archive(const std::filesystem::path& archive_path, const std::vector<std::filesystem::path>& files, CompressionMode mode)
+void ZipWriter::create(const std::filesystem::path& archive_path, const std::vector<std::filesystem::path>& files, CompressionMode mode)
 {
     entries_.clear();
 
@@ -221,12 +215,6 @@ uint16_t ZipWriter::compression_method(CompressionMode mode)
 
     case CompressionMode::Deflate:
         return 8;
-
-    case CompressionMode::Bzip2:
-        return 12;
-
-    case CompressionMode::Lzma:
-        return 14;
     }
 
     return 0;

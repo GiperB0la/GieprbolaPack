@@ -8,26 +8,14 @@
 #include <chrono>
 #include <stdexcept>
 
-#include "../../Checksum/include/Checksum.hpp"
+#include "../../../Checksum/include/Checksum.hpp"
+#include "../../Archive/include/ArchiveTypes.hpp"
+#include "../../Archive/include/IArchiveWriter.hpp"
 
-class ZipWriter
+class ZipWriter : public IArchiveWriter
 {
 public:
-    enum class CompressionMode {
-        Store,      // без сжатия
-        Deflate,    // ZIP Deflate
-        Lzma,       // на будущее
-        Bzip2       // на будущее
-    };
-
-public:
-    static ZipWriter& instance();
-
-private:
-    ZipWriter() = default;
-
-public:
-    void create_archive(const std::filesystem::path& archive_path, const std::vector<std::filesystem::path>& files, CompressionMode mode);
+    void create(const std::filesystem::path& archive_path, const std::vector<std::filesystem::path>& files, CompressionMode mode) override;
 
 private:
     struct Entry {

@@ -109,10 +109,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core\ArchiveEditor\Archive\src\Archive.cpp" />
+    <ClCompile Include="Core\ArchiveEditor\Archive\src\ArchiveFactory.cpp" />
+    <ClCompile Include="Core\ArchiveEditor\Zip\src\ZipReader.cpp" />
     <ClCompile Include="Core\Checksum\src\Checksum.cpp" />
     <ClCompile Include="Core\FileScanner\src\FileScanner.cpp" />
-    <ClCompile Include="Core\ZipEditor\src\ZipWriter.cpp" />
+    <ClCompile Include="Core\ArchiveEditor\Zip\src\ZipWriter.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="UI\Services\FileDirectoryLoader\src\FileDirectoryLoader.cpp" />
     <ClCompile Include="UI\Services\FileSelection\src\FileSelection.cpp" />
@@ -128,15 +129,21 @@
     <None Include="QML\components\TopMenu\TopMenu.qml" />
     <None Include="QML\components\TopMenu\TopMenuButton.qml" />
     <None Include="QML\MainLayout.qml" />
+    <None Include="QML\Styles\ComboBox.qml" />
+    <None Include="QML\Styles\ConfirmDialog.qml" />
+    <None Include="QML\Styles\TextField.qml" />
     <QtRcc Include="QML\qml.qrc" />
     <None Include="QML\Main.qml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\ArchiveEditor\ArchiveFormat\include\ArchiveFormat.hpp" />
-    <ClInclude Include="Core\ArchiveEditor\Archive\include\Archive.hpp" />
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\ArchiveFactory.hpp" />
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\ArchiveTypes.hpp" />
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\IArchiveReader.hpp" />
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\IArchiveWriter.hpp" />
+    <ClInclude Include="Core\ArchiveEditor\Zip\include\ZipReader.hpp" />
     <ClInclude Include="Core\Checksum\include\Checksum.hpp" />
     <ClInclude Include="Core\FileScanner\include\FileScanner.hpp" />
-    <ClInclude Include="Core\ZipEditor\include\ZipWriter.hpp" />
+    <ClInclude Include="Core\ArchiveEditor\Zip\include\ZipWriter.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="UI\Services\FileDirectoryLoader\include\FileDirectoryLoader.hpp" />
     <ClInclude Include="UI\Services\FileSelection\include\FileSelection.hpp" />

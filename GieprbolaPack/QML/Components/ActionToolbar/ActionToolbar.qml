@@ -1,6 +1,7 @@
 ﻿import QtQuick
 import QtQuick.Layouts
 import "../../Resources"
+import "../../Styles"
 
 Rectangle {
     color: "#232323"
@@ -11,12 +12,26 @@ Rectangle {
     ArchiveDialog {
         id: archiveDialog
 
-        onAccepted: function(archiveName) {
-            FileSystemModel.create_archive(archiveName)
+        onAccepted: function(archiveName, archiveType, compressionMode) {
+            FileSystemModel.create_archive(archiveName, archiveType, compressionMode)
         }
 
         onRejected: {
             console.log("Create archive canceled")
+        }
+    }
+
+    ConfirmDialog {
+        id: deleteDialog
+
+        message: "Delete selected files?"
+
+        onAccepted: {
+            FileSystemModel.delete_selected()
+        }
+
+        onRejected: {
+            console.log("Delete canceled")
         }
     }
 
@@ -43,6 +58,16 @@ Rectangle {
 
             onClicked: {
                 console.log("Extract")
+            }
+        }
+
+        ActionToolbarButton {
+            text: "Delete"
+            imageSource: "qrc:/qt/qml/gieprbolapack/Resources/Delete.png"
+            tooltipText: "Delete Files"
+
+            onClicked: {
+                deleteDialog.open_dialog()
             }
         }
 

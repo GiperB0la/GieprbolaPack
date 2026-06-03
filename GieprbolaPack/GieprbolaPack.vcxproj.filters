@@ -32,9 +32,6 @@
     <None Include="QML\Main.qml">
       <Filter>Source Files</Filter>
     </None>
-    <ClCompile Include="Core\ArchiveEditor\Archive\src\Archive.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Checksum\src\Checksum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,7 +47,13 @@
     <ClCompile Include="UI\Services\FileDirectoryLoader\src\FileDirectoryLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ZipEditor\src\ZipWriter.cpp">
+    <ClCompile Include="Core\ArchiveEditor\Zip\src\ZipWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ArchiveEditor\Zip\src\ZipReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ArchiveEditor\Archive\src\ArchiveFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -88,14 +91,17 @@
     <None Include="QML\Components\ActionToolbar\ArchiveDialogButton.qml">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="QML\Styles\TextField.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="QML\Styles\ComboBox.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="QML\Styles\ConfirmDialog.qml">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\ArchiveEditor\Archive\include\Archive.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\ArchiveEditor\ArchiveFormat\include\ArchiveFormat.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Checksum\include\Checksum.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -108,10 +114,25 @@
     <ClInclude Include="UI\Services\FileDirectoryLoader\include\FileDirectoryLoader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\ZipEditor\include\ZipWriter.hpp">
+    <ClInclude Include="Core\ArchiveEditor\Zip\include\ZipWriter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\ArchiveTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\IArchiveReader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\IArchiveWriter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ArchiveEditor\Zip\include\ZipReader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ArchiveEditor\Archive\include\ArchiveFactory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

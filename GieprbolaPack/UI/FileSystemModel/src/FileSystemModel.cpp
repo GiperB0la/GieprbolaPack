@@ -11,9 +11,52 @@ FileSystemModel::FileSystemModel(QObject* parent)
     : QAbstractListModel(parent)
 {
     const auto path = FileScanner::instance().get_root_path();
+
     current_path_ = QString::fromStdWString(path.wstring());
     files_ = FileScanner::instance().scan(path);
+
     update_stats();
+    watch_current_path();
+
+    connect(&watcher_, &QFileSystemWatcher::directoryChanged, this, [this](const QString&) {
+            refresh();
+        }
+    );
+}
+
+void FileSystemModel::refresh()
+{
+    const DirectoryLoadResult result = directory_loader_.load(current_path_);
+
+    if (!result.success) {
+        status_text_ = result.error_text;
+        emit stats_changed();
+        return;
+    }
+
+    beginResetModel();
+
+    files_ = result.files;
+
+    update_stats();
+    update_selection_stats();
+
+    endResetModel();
+
+    watch_current_path();
+}
+
+void FileSystemModel::watch_current_path()
+{
+    const QStringList watched = watcher_.directories();
+
+    if (!watched.empty()) {
+        watcher_.removePaths(watched);
+    }
+
+    if (std::filesystem::is_directory(current_path_.toStdWString())) {
+        watcher_.addPath(current_path_);
+    }
 }
 
 int FileSystemModel::rowCount(const QModelIndex& parent) const
@@ -163,6 +206,8 @@ void FileSystemModel::set_current_path(const QString& path)
 
     endResetModel();
 
+    watch_current_path();
+
     emit current_path_changed();
 }
 
@@ -306,7 +351,7 @@ void FileSystemModel::update_selection_stats()
     emit selection_changed();
 }
 
-void FileSystemModel::create_archive(const QString& archive_name)
+void FileSystemModel::create_archive(const QString& archive_path, int archive_type, int compression_mode)
 {
     const QStringList selected = selected_paths();
 
@@ -333,19 +378,59 @@ void FileSystemModel::create_archive(const QString& archive_name)
         return;
     }
 
-    std::filesystem::path archive_path =
-        std::filesystem::path(current_path_.toStdWString()) /
-        archive_name.toStdWString();
+    const std::filesystem::path fs_archive_path = archive_path.toStdWString();
 
     try {
-        ZipWriter::instance().create_archive(
-            archive_path,
-            files,
-            ZipWriter::CompressionMode::Store
-        );
+        const ArchiveType type = static_cast<ArchiveType>(archive_type);
+        const CompressionMode mode = static_cast<CompressionMode>(compression_mode);
+
+        ArchiveFactory::create_writer(type)->create(fs_archive_path, files, mode);
 
         status_text_ = tr("Archive created");
         clear_selection();
+        refresh();
+    }
+    catch (const std::exception& error) {
+        status_text_ = QString::fromUtf8(error.what());
+    }
+
+    emit stats_changed();
+}
+
+void FileSystemModel::delete_selected()
+{
+    const QStringList selected = selected_paths();
+
+    if (selected.empty()) {
+        status_text_ = tr("No files selected");
+        emit stats_changed();
+        return;
+    }
+
+    int deleted_count = 0;
+
+    try {
+        for (const QString& path : selected) {
+            const std::filesystem::path fs_path = path.toStdWString();
+
+            if (!std::filesystem::exists(fs_path)) {
+                continue;
+            }
+
+            if (std::filesystem::is_directory(fs_path)) {
+                std::filesystem::remove_all(fs_path);
+            }
+            else {
+                std::filesystem::remove(fs_path);
+            }
+
+            ++deleted_count;
+        }
+
+        clear_selection();
+        refresh();
+
+        status_text_ = tr("Deleted: %1").arg(deleted_count);
     }
     catch (const std::exception& error) {
         status_text_ = QString::fromUtf8(error.what());

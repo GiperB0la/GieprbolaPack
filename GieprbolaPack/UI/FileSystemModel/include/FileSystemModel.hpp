@@ -5,9 +5,10 @@
 #include <QAbstractListModel>
 #include <QDateTime>
 #include <QSet>
+#include <QFileSystemWatcher>
 
 #include "../../../Core/FileScanner/include/FileScanner.hpp"
-#include "../../../Core/ZipEditor/include/ZipWriter.hpp"
+#include "../../../Core/ArchiveEditor/Archive/include/ArchiveFactory.hpp"
 
 #include "../../Services/FileSelection/include/FileSelection.hpp"
 #include "../../Services/FileDirectoryLoader/include/FileDirectoryLoader.hpp"
@@ -71,12 +72,14 @@ public:
     int selected_folder_count() const;
     int selected_file_count() const;
 
+    Q_INVOKABLE void refresh();
     Q_INVOKABLE QStringList selected_paths() const;
 
     Q_INVOKABLE void clear_selection();
     Q_INVOKABLE void set_checked(int row, bool checked);
     Q_INVOKABLE void toggle_checked(int row);
-    Q_INVOKABLE void create_archive(const QString& archive_name);
+    Q_INVOKABLE void create_archive(const QString& archive_path, int archive_type, int compression_mode);
+    Q_INVOKABLE void delete_selected();
 
 signals:
     void current_path_changed();
@@ -84,6 +87,7 @@ signals:
     void selection_changed();
 
 private:
+    void watch_current_path();
     void update_stats();
     void update_selection_stats();
 
@@ -100,6 +104,8 @@ public:
     };
 
 private:
+    QFileSystemWatcher watcher_;
+
     QString current_path_;
 
     std::vector<FileInfo> files_;

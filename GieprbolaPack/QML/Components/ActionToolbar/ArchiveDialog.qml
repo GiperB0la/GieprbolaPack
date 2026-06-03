@@ -1,31 +1,37 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../../Styles"
 
 Window {
     id: root
 
-    width: 360
-    height: 160
-    minimumWidth: 320
-    minimumHeight: 150
+    minimumWidth: 400
+    minimumHeight: 200
 
     visible: false
     modality: Qt.ApplicationModal
-    flags: Qt.Window | Qt.WindowTitleHint | Qt.WindowSystemMenuHint | Qt.WindowCloseButtonHint | Qt.WindowStaysOnTopHint
+
+    flags: Qt.Window
+         | Qt.WindowTitleHint
+         | Qt.WindowSystemMenuHint
+         | Qt.WindowCloseButtonHint
+         | Qt.WindowStaysOnTopHint
 
     title: "Create archive"
 
     property alias archiveName: archiveNameField.text
 
-    signal accepted(string archiveName)
+    signal accepted(string archiveName, int archiveType, int compressionMode)
     signal rejected()
 
     function open_dialog() {
         archiveNameField.text = "archive.zip"
+
         root.show()
         root.raise()
         root.requestActivate()
+
         archiveNameField.forceActiveFocus()
         archiveNameField.selectAll()
     }
@@ -39,22 +45,81 @@ Window {
             anchors.margins: 16
             spacing: 12
 
-            Text {
-                text: "Create archive"
-                color: "#E0E0E0"
-                font.pixelSize: 18
-                font.bold: true
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 8
+
+                Text {
+                    text: "Archive Name:"
+                    color: "#E0E0E0"
+                    font.pixelSize: 14
+                }
+
+                TextField {
+                    id: archiveNameField
+
+                    Layout.fillWidth: true
+
+                    text: "archive.zip"
+                    placeholderText: "archive.zip"
+
+                    onAccepted: okButton.clicked()
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 12
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+
+                        Text {
+                            text: "Archive Type:"
+                            color: "#E0E0E0"
+                            font.pixelSize: 14
+                        }
+
+                        ComboBox {
+                            id: archiveTypeBox
+
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 28
+
+                            model: [
+                                "ZIP",
+                                "RAR"
+                            ]
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+
+                        Text {
+                            text: "Compression Method:"
+                            color: "#E0E0E0"
+                            font.pixelSize: 14
+                        }
+
+                        ComboBox {
+                            id: compressionMethodBox
+
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 28
+
+                            model: [
+                                "Store",
+                                "Deflate"
+                            ]
+                        }
+                    }
+                }
             }
 
-            TextField {
-                id: archiveNameField
-
-                Layout.fillWidth: true
-                text: "archive.zip"
-                placeholderText: "Archive name"
-                selectByMouse: true
-
-                onAccepted: okButton.clicked()
+            Item {
+                Layout.fillHeight: true
             }
 
             RowLayout {
@@ -66,6 +131,8 @@ Window {
                 }
 
                 ArchiveDialogButton {
+                    id: okButton
+
                     text: "OK"
 
                     normalColor: "#1F4E79"
@@ -73,7 +140,12 @@ Window {
                     pressedColor: "#184364"
 
                     onClicked: {
-                        root.accepted(archiveNameField.text)
+                        root.accepted(
+                            archiveNameField.text,
+                            archiveTypeBox.currentIndex,
+                            compressionMethodBox.currentIndex
+                        )
+
                         root.close()
                     }
                 }
