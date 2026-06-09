@@ -1,14 +1,16 @@
 #include "../include/ZipWriter.hpp"
 
 
-void ZipWriter::create(const std::filesystem::path& archive_path, const std::vector<std::filesystem::path>& files, CompressionMode mode)
+void ZipWriter::create(const std::filesystem::path& archive_path, const std::vector<ArchiveFile>& files, CompressionMode mode)
 {
     entries_.clear();
 
-    output_.open(
-        archive_path,
-        std::ios::binary | std::ios::trunc
-    );
+    std::cout << "ZipWriter create:\n"
+              << archive_path
+              << "\nfiles =" << files.size()
+              << std::endl;
+
+    output_.open(archive_path, std::ios::binary | std::ios::trunc);
 
     if (!output_.is_open()) {
         throw std::runtime_error("Failed to create archive");
@@ -24,8 +26,7 @@ void ZipWriter::create(const std::filesystem::path& archive_path, const std::vec
         write_central_directory_header(entry, mode);
     }
 
-    const uint32_t central_directory_size =
-        current_offset() - central_directory_offset;
+    const uint32_t central_directory_size = current_offset() - central_directory_offset;
 
     write_end_of_central_directory(
         central_directory_offset,
@@ -35,40 +36,156 @@ void ZipWriter::create(const std::filesystem::path& archive_path, const std::vec
     output_.close();
 }
 
-void ZipWriter::add_file(const std::filesystem::path& file_path, CompressionMode mode)
+void ZipWriter::add_file(const ArchiveFile& archive_file, CompressionMode mode)
 {
+    const std::filesystem::path& file_path = archive_file.source_path;
+
     if (!output_.is_open()) {
         throw std::runtime_error("ZIP output file is not open");
-    }
-
-    if (mode != CompressionMode::Store) {
-        throw std::runtime_error("Only Store compression mode is supported now");
     }
 
     if (!std::filesystem::is_regular_file(file_path)) {
         throw std::runtime_error("ZIP entry is not a regular file");
     }
 
-    const auto file_size = std::filesystem::file_size(file_path);
-
-    if (file_size > UINT32_MAX) {
-        throw std::runtime_error("File is too large for simple ZIP writer");
-    }
+    PreparedFileData prepared = prepare_file_data(file_path, mode);
 
     Entry entry;
 
-    entry.archive_name = make_archive_name(file_path);
-    entry.crc32 = Checksum::instance().crc32_file(file_path);
-    entry.compressed_size = static_cast<uint32_t>(file_size);
-    entry.uncompressed_size = static_cast<uint32_t>(file_size);
+    entry.archive_name = archive_file.archive_name;
+    entry.crc32 = prepared.crc32;
+    entry.compressed_size = prepared.compressed_size;
+    entry.uncompressed_size = prepared.uncompressed_size;
     entry.local_header_offset = current_offset();
 
     make_dos_time_date(file_path, entry.mod_time, entry.mod_date);
 
     write_local_file_header(entry, mode);
-    copy_file_data(file_path);
+    write_file_data(prepared);
 
     entries_.push_back(entry);
+}
+
+ZipWriter::PreparedFileData ZipWriter::prepare_file_data(const std::filesystem::path& file_path, CompressionMode mode)
+{
+    switch (mode) {
+    case CompressionMode::Store:
+        return prepare_store_data(file_path);
+
+    case CompressionMode::Deflate:
+        return prepare_deflate_data(file_path);
+    }
+
+    throw std::runtime_error("Unsupported compression mode");
+}
+
+std::vector<char> ZipWriter::read_file_bytes(const std::filesystem::path& file_path)
+{
+    std::ifstream input(file_path, std::ios::binary);
+
+    if (!input.is_open()) {
+        throw std::runtime_error("Failed to open file");
+    }
+
+    input.seekg(0, std::ios::end);
+    const std::streamoff size = input.tellg();
+    input.seekg(0, std::ios::beg);
+
+    if (size < 0 || static_cast<uint64_t>(size) > UINT32_MAX) {
+        throw std::runtime_error("File is too large for simple ZIP writer");
+    }
+
+    std::vector<char> data(static_cast<size_t>(size));
+
+    if (!data.empty()) {
+        input.read(data.data(), static_cast<std::streamsize>(data.size()));
+    }
+
+    return data;
+}
+
+ZipWriter::PreparedFileData ZipWriter::prepare_store_data(const std::filesystem::path& file_path)
+{
+    PreparedFileData prepared;
+
+    prepared.data = read_file_bytes(file_path);
+    prepared.crc32 = Checksum::instance().crc32_file(file_path);
+    prepared.uncompressed_size = static_cast<uint32_t>(prepared.data.size());
+    prepared.compressed_size = static_cast<uint32_t>(prepared.data.size());
+
+    return prepared;
+}
+
+ZipWriter::PreparedFileData ZipWriter::prepare_deflate_data(const std::filesystem::path& file_path)
+{
+    PreparedFileData prepared;
+
+    const std::vector<char> input = read_file_bytes(file_path);
+
+    prepared.crc32 = Checksum::instance().crc32_file(file_path);
+    prepared.uncompressed_size = static_cast<uint32_t>(input.size());
+
+    z_stream stream{};
+    const int init_result = deflateInit2(
+        &stream,
+        Z_DEFAULT_COMPRESSION,
+        Z_DEFLATED,
+        -MAX_WBITS,
+        8,
+        Z_DEFAULT_STRATEGY
+    );
+
+    if (init_result != Z_OK) {
+        throw std::runtime_error("Failed to initialize deflate");
+    }
+
+    std::vector<char> output;
+    output.resize(input.size() + 1024);
+
+    stream.next_in = reinterpret_cast<Bytef*>(const_cast<char*>(input.data()));
+    stream.avail_in = static_cast<uInt>(input.size());
+
+    do {
+        const size_t old_size = output.size();
+
+        stream.next_out = reinterpret_cast<Bytef*>(output.data() + stream.total_out);
+        stream.avail_out = static_cast<uInt>(output.size() - stream.total_out);
+
+        const int result = deflate(&stream, Z_FINISH);
+
+        if (result == Z_STREAM_END) {
+            break;
+        }
+
+        if (result != Z_OK) {
+            deflateEnd(&stream);
+            throw std::runtime_error("Deflate failed");
+        }
+
+        output.resize(old_size * 2);
+    } while (true);
+
+    output.resize(stream.total_out);
+    deflateEnd(&stream);
+
+    if (output.size() > UINT32_MAX) {
+        throw std::runtime_error("Compressed file is too large");
+    }
+
+    prepared.data = std::move(output);
+    prepared.compressed_size = static_cast<uint32_t>(prepared.data.size());
+
+    return prepared;
+}
+
+void ZipWriter::write_file_data(const PreparedFileData& prepared)
+{
+    if (!prepared.data.empty()) {
+        output_.write(
+            prepared.data.data(),
+            static_cast<std::streamsize>(prepared.data.size())
+        );
+    }
 }
 
 void ZipWriter::write_local_file_header(const Entry& entry, CompressionMode mode)
@@ -155,27 +272,6 @@ void ZipWriter::write_end_of_central_directory(uint32_t central_directory_offset
     write_u32(central_directory_offset);
 
     write_u16(0);
-}
-
-void ZipWriter::copy_file_data(const std::filesystem::path& file_path)
-{
-    std::ifstream input(file_path, std::ios::binary);
-
-    if (!input.is_open()) {
-        throw std::runtime_error("Failed to open file for ZIP writing");
-    }
-
-    std::array<char, 8192> buffer{};
-
-    while (input) {
-        input.read(buffer.data(), buffer.size());
-
-        const std::streamsize bytes_read = input.gcount();
-
-        if (bytes_read > 0) {
-            output_.write(buffer.data(), bytes_read);
-        }
-    }
 }
 
 uint32_t ZipWriter::current_offset()

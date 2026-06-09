@@ -13,6 +13,7 @@
 		<file>Components/ActionToolbar/ArchiveDialogButton.qml</file>
 
 		<file>Components/PathBar/PathBar.qml</file>
+		<file>Components/PathBar/PathBarButton.qml</file>
 
 		<file>Components/FileTable/FileTable.qml</file>
 		
@@ -28,5 +29,28 @@
 		<file>../Resources/Add.png</file>
 		<file>../Resources/Extract.png</file>
 		<file>../Resources/Delete.png</file>
+		<file>../Resources/Arrow.png</file>
+		<file>../Resources/FileExplorer.svg</file>
+
+		
+		<file>../Resources/Extensions/default_file.svg</file>
+		<file>../Resources/Extensions/default_folder.svg</file>
+		<file>../Resources/Extensions/file_type_binary.svg</file>
+		<file>../Resources/Extensions/file_type_c.svg</file>
+		<file>../Resources/Extensions/file_type_cpp.svg</file>
+		<file>../Resources/Extensions/file_type_cheader.svg</file>
+		<file>../Resources/Extensions/file_type_cppheader.svg</file>
+		<file>../Resources/Extensions/exe.svg</file>
+		<file>../Resources/Extensions/dll.svg</file>
+		<file>../Resources/Extensions/file_type_zip.svg</file>
+		<file>../Resources/Extensions/file_type_image.svg</file>
+		<file>../Resources/Extensions/file_type_pdf.svg</file>
+		<file>../Resources/Extensions/file_type_json.svg</file>
+		<file>../Resources/Extensions/file_type_text.svg</file>
+		<file>../Resources/Extensions/file_type_python.svg</file>
+		<file>../Resources/Extensions/file_type_java.svg</file>
+		<file>../Resources/Extensions/file_type_word.svg</file>
+		<file>../Resources/Extensions/file_type_powerpoint.svg</file>
+		<file>../Resources/Extensions/file_type_excel.svg</file>
 	</qresource>
 </RCC>

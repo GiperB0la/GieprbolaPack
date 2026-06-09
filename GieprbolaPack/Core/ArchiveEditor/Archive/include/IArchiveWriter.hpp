@@ -10,5 +10,5 @@ public:
     virtual ~IArchiveWriter() = default;
 
 public:
-    virtual void create(const std::filesystem::path& archive_path, const std::vector<std::filesystem::path>& files, CompressionMode compression_mode) = 0;
+    virtual void create(const std::filesystem::path& archive_path, const std::vector<ArchiveFile>& files, CompressionMode compression_mode) = 0;
 };

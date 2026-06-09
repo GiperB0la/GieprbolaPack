@@ -1,3 +1,4 @@
+#include <QApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
@@ -28,7 +29,7 @@ int main(int argc, char* argv[])
     std::cout << "Console initialized\n";
 #endif
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
 
     app.setWindowIcon(QIcon(":/qt/qml/gieprbolapack/Resources/Icon.png"));
 

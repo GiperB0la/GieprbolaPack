@@ -6,30 +6,26 @@ Rectangle {
 
     property alias text: label.text
     property alias imageSource: icon.source
-
     property string tooltipText: ""
 
     signal clicked()
 
-    width: 72
-    height: 72
+    width: 40
+    height: 40
 
     radius: 8
 
     color:
-        mouse.pressed ? "#404040" :
-        mouse.containsMouse ? "#2E2E2E" :
-        "#262626"
+        mouse.pressed ? "#303030" :
+        mouse.containsMouse ? "#252525" :
+        "#1B1B1B"
 
-    border.width:
-        mouse.pressed ? 1 :
-        mouse.containsMouse ? 1 :
-        1
+    border.width: 1
 
     border.color:
-        mouse.pressed ? "#6A6A6A" :
-        mouse.containsMouse ? "#5A5A5A" :
-        "#3A3A3A"
+        mouse.pressed ? "#707070" :
+        mouse.containsMouse ? "#505050" :
+        "#383838"
 
     Behavior on color {
         ColorAnimation {
@@ -43,38 +39,36 @@ Rectangle {
         }
     }
 
-    Column {
+    Image {
+        id: icon
+
         anchors.centerIn: parent
 
-        spacing: 4
+        width: 20
+        height: 20
 
-        Image {
-            id: icon
+        visible: source != ""
 
-            anchors.horizontalCenter: parent.horizontalCenter
+        fillMode: Image.PreserveAspectFit
 
-            width: 32
-            height: 32
+        smooth: true
+        mipmap: true
+    }
 
-            fillMode: Image.PreserveAspectFit
+    Text {
+        id: label
 
-            smooth: true
-            mipmap: true
-        }
+        anchors.centerIn: parent
 
-        Text {
-            id: label
+        visible: icon.source == ""
 
-            width: root.width - 8
+        color: "#E0E0E0"
 
-            horizontalAlignment: Text.AlignHCenter
+        font.pixelSize: 18
+        font.bold: true
 
-            color: "#E0E0E0"
-
-            font.pixelSize: 11
-
-            elide: Text.ElideRight
-        }
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
     }
 
     MouseArea {
@@ -86,9 +80,7 @@ Rectangle {
 
         cursorShape: Qt.PointingHandCursor
 
-        onClicked: {
-            root.clicked()
-        }
+        onClicked: root.clicked()
     }
 
     Rectangle {
@@ -99,16 +91,18 @@ Rectangle {
 
         z: 999
 
-        anchors.bottom: parent.top
-        anchors.bottomMargin: 8
+        anchors.left: parent.right
+        anchors.leftMargin: 8
 
-        x: (parent.width - width) / 3
+        anchors.bottom: parent.top
+        anchors.bottomMargin: 4
 
         radius: 6
+
         color: "#2B2B2B"
 
-        border.color: "#4A4A4A"
         border.width: 1
+        border.color: "#4A4A4A"
 
         width: tooltipLabel.implicitWidth + 20
         height: tooltipLabel.implicitHeight + 12
@@ -117,6 +111,7 @@ Rectangle {
             id: tooltipLabel
 
             anchors.centerIn: parent
+
             text: tooltipText
 
             color: "#F0F0F0"

@@ -6,8 +6,8 @@ import "../../Styles"
 Window {
     id: root
 
-    minimumWidth: 400
-    minimumHeight: 200
+    minimumWidth: 500
+    minimumHeight: 300
 
     visible: false
     modality: Qt.ApplicationModal
@@ -66,6 +66,52 @@ Window {
                     onAccepted: okButton.clicked()
                 }
 
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+
+                    color: "#2B2B2B"
+                    radius: 6
+                    border.color: "#3A3A3A"
+                    border.width: 1
+
+                    GridLayout {
+                        anchors.fill: parent
+                        anchors.leftMargin: 12
+                        anchors.rightMargin: 12
+
+                        columns: 3
+                        columnSpacing: 0
+
+                        Text {
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignHCenter
+
+                            text: "Folders: " + FileSystemModel.selectedFolderCount
+                            color: "#E0E0E0"
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignHCenter
+
+                            text: "Files: " + FileSystemModel.selectedFileCount
+                            color: "#E0E0E0"
+                            font.pixelSize: 14
+                        }
+
+                        Text {
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignHCenter
+
+                            text: "Size: " + FileSystemModel.selectedSizeText
+                            color: "#E0E0E0"
+                            font.pixelSize: 14
+                        }
+                    }
+                }
+
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 12
@@ -110,8 +156,8 @@ Window {
                             Layout.preferredHeight: 28
 
                             model: [
-                                "Store",
-                                "Deflate"
+                                "Deflate",
+                                "Store"
                             ]
                         }
                     }
@@ -160,9 +206,5 @@ Window {
                 }
             }
         }
-    }
-
-    onClosing: function(close) {
-        root.rejected()
     }
 }

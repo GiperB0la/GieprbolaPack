@@ -214,10 +214,35 @@ Rectangle {
                         }
                     }
 
-                    TableCell {
-                        text: fileName
-                        color: "#f0f0f0"
+                    Item {
                         Layout.preferredWidth: 400
+                        Layout.fillHeight: true
+
+                        Row {
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 8
+
+                            Image {
+                                source: fileIcon
+                                width: 20
+                                height: 20
+
+                                fillMode: Image.PreserveAspectFit
+                                smooth: true
+                            }
+
+                            Text {
+                                text: fileName
+
+                                color: "#f0f0f0"
+                                font.pixelSize: 13
+
+                                width: 360
+                                elide: Text.ElideRight
+
+                                verticalAlignment: Text.AlignVCenter
+                            }
+                        }
                     }
 
                     TableCell {

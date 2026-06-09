@@ -6,6 +6,7 @@
 #include <QDateTime>
 #include <QSet>
 #include <QFileSystemWatcher>
+#include <QFileDialog>
 
 #include "../../../Core/FileScanner/include/FileScanner.hpp"
 #include "../../../Core/ArchiveEditor/Archive/include/ArchiveFactory.hpp"
@@ -46,6 +47,10 @@ class FileSystemModel : public QAbstractListModel
             READ selected_file_count
             NOTIFY selection_changed)
 
+        Q_PROPERTY(QString selectedSizeText
+            READ selected_size_text
+            NOTIFY selection_changed)
+
 public:
     static FileSystemModel& instance();
 
@@ -71,9 +76,12 @@ public:
 
     int selected_folder_count() const;
     int selected_file_count() const;
+    QString selected_size_text() const;
 
     Q_INVOKABLE void refresh();
+    Q_INVOKABLE void go_parent();
     Q_INVOKABLE QStringList selected_paths() const;
+    Q_INVOKABLE QString select_folder(const QString& current_path);
 
     Q_INVOKABLE void clear_selection();
     Q_INVOKABLE void set_checked(int row, bool checked);
@@ -92,10 +100,12 @@ private:
     void update_selection_stats();
 
     QString format_size(uint64_t bytes) const;
+    QString icon_path(const FileInfo& file) const;
 
 public:
     enum Roles {
-        FileNameRole = Qt::UserRole + 1,
+        FileIconRole = Qt::UserRole + 1,
+        FileNameRole,
         FileTypeRole,
         FileSizeRole,
         FileDateRole,
@@ -115,11 +125,11 @@ private:
 
     int folder_count_ = 0;
     int file_count_ = 0;
-
     uint64_t total_size_ = 0;
 
     QString status_text_ = tr("Done");
 
     int selected_folder_count_ = 0;
     int selected_file_count_ = 0;
+    uint64_t selected_size_ = 0;
 };

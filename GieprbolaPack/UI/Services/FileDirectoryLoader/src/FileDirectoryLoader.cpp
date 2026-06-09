@@ -5,7 +5,7 @@ DirectoryLoadResult FileDirectoryLoader::load(const QString& path) const
 {
     DirectoryLoadResult result;
 
-    const std::filesystem::path fs_path(path.toStdWString());
+	std::filesystem::path fs_path(path.toStdWString());
 
     if (!std::filesystem::exists(fs_path)) {
         result.error_text = QObject::tr("Path not found");
