@@ -87,7 +87,11 @@ public:
     Q_INVOKABLE void set_checked(int row, bool checked);
     Q_INVOKABLE void toggle_checked(int row);
     Q_INVOKABLE void create_archive(const QString& archive_path, int archive_type, int compression_mode);
+    Q_INVOKABLE void extract_archive(const QString& extract_path);
     Q_INVOKABLE void delete_selected();
+    Q_INVOKABLE void open_path(const QString& path);
+    Q_INVOKABLE void set_status_text(const QString& text);
+    Q_INVOKABLE bool has_selected_archives() const;
 
 signals:
     void current_path_changed();
@@ -110,7 +114,8 @@ public:
         FileSizeRole,
         FileDateRole,
         FileCheckedRole,
-        FileFullPathRole
+        FileFullPathRole,
+        FileIsDirRole
     };
 
 private:

@@ -88,7 +88,7 @@
     <None Include="QML\Components\ActionToolbar\ArchiveDialog.qml">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="QML\Components\ActionToolbar\ArchiveDialogButton.qml">
+    <None Include="QML\Components\ActionToolbar\ActionDialogButton.qml">
       <Filter>Source Files</Filter>
     </None>
     <None Include="QML\Styles\TextField.qml">
@@ -98,6 +98,18 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="QML\Styles\ConfirmDialog.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="QML\Components\TopMenu\TopMenuPopup.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="QML\Components\TopMenu\TopMenuPopupButton.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="QML\Styles\FolderPathField.qml">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="QML\Components\ActionToolbar\ExtractDialog.qml">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

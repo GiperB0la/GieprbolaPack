@@ -139,6 +139,10 @@ QVariant FileSystemModel::data(const QModelIndex& index, int role) const
         return QString::fromStdWString(file.full_path.wstring());
     }
 
+    case FileIsDirRole: {
+        return file.is_directory;
+    }
+
     default:
         return {};
     }
@@ -188,7 +192,8 @@ QHash<int, QByteArray> FileSystemModel::roleNames() const
         { FileSizeRole, "fileSize" },
         { FileDateRole, "fileDate" },
         { FileCheckedRole, "fileChecked" },
-        { FileFullPathRole, "fileFullPath" }
+        { FileFullPathRole, "fileFullPath" },
+        { FileIsDirRole, "fileIsDir" }
     };
 }
 
@@ -483,6 +488,66 @@ void FileSystemModel::create_archive(const QString& archive_path, int archive_ty
     emit stats_changed();
 }
 
+void FileSystemModel::extract_archive(const QString& extract_path)
+{
+    const QStringList selected = selected_paths();
+
+    if (selected.empty()) {
+        status_text_ = tr("No archives selected");
+        emit stats_changed();
+        return;
+    }
+
+    try {
+        std::filesystem::path destination = extract_path.toStdWString();
+
+        if (destination.is_relative()) {
+            destination = std::filesystem::path(current_path_.toStdWString()) / destination;
+        }
+
+        for (const QString& path : selected) {
+            const std::filesystem::path archive_path = path.toStdWString();
+
+            ArchiveType type;
+            const QString extension = QString::fromStdWString(archive_path.extension().wstring()).toLower();
+
+            if (extension == ".zip") {
+                type = ArchiveType::Zip;
+            }
+            else if (extension == ".rar") {
+                type = ArchiveType::Rar;
+            }
+            else {
+                continue;
+            }
+
+            auto reader = ArchiveFactory::create_reader(type);
+
+            if (!reader) {
+                continue;
+            }
+
+            reader->open(archive_path);
+
+            const std::filesystem::path archive_folder = destination / archive_path.stem();
+
+            reader->extract_all(archive_folder);
+        }
+
+        status_text_ = tr("Archives extracted");
+
+        clear_selection();
+        refresh();
+    }
+    catch (const std::exception& error) {
+        qDebug() << "extract_archive error =" << error.what();
+
+        status_text_ = QString::fromUtf8(error.what());
+    }
+
+    emit stats_changed();
+}
+
 void FileSystemModel::delete_selected()
 {
     const QStringList selected = selected_paths();
@@ -569,4 +634,51 @@ QString FileSystemModel::icon_path(const FileInfo& file) const
     const QString extension = QString::fromStdWString(file.full_path.extension().wstring()).toLower();
 
     return icons.value(extension, "qrc:/qt/qml/gieprbolapack/Resources/Extensions/default_file.svg");
+}
+
+void FileSystemModel::open_path(const QString& path)
+{
+    const std::filesystem::path fs_path = path.toStdWString();
+
+    if (!std::filesystem::exists(fs_path)) {
+        status_text_ = tr("Path does not exist");
+        emit stats_changed();
+        return;
+    }
+
+    if (!std::filesystem::is_directory(fs_path)) {
+        return;
+    }
+
+    set_current_path(path);
+}
+
+void FileSystemModel::set_status_text(const QString& text)
+{
+    if (status_text_ == text) {
+        return;
+    }
+
+    status_text_ = text;
+    emit stats_changed();
+}
+
+bool FileSystemModel::has_selected_archives() const
+{
+    const QStringList selected = selected_paths();
+
+    if (selected.empty()) {
+        return false;
+    }
+
+    for (const QString& path : selected) {
+        const QString lower = path.toLower();
+
+        if (!lower.endsWith(".zip") &&
+            !lower.endsWith(".rar")) {
+            return false;
+        }
+    }
+
+    return true;
 }

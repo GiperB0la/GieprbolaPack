@@ -157,6 +157,10 @@ Rectangle {
                             mouse.modifiers & Qt.ShiftModifier
                         )
                     }
+
+                    onDoubleClicked: function(mouse) {
+                        FileSystemModel.open_path(fileFullPath)
+                    }
                 }
 
                 RowLayout {

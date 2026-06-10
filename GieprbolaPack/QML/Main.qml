@@ -7,7 +7,7 @@ ApplicationWindow {
     width: 1280
     height: 800
 
-    title: "GieprbolaPack v0.4"
+    title: "GieprbolaPack v0.5"
 
     color: "#1C1C1C"
 

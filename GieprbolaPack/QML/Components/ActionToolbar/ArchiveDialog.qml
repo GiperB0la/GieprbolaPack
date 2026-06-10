@@ -55,12 +55,12 @@ Window {
                     font.pixelSize: 14
                 }
 
-                TextField {
+                FolderPathField {
                     id: archiveNameField
 
-                    Layout.fillWidth: true
-
-                    text: "archive.zip"
+                    defaultFileName: "archive.zip"
+                    startFolder: FileSystemModel.currentPath
+                    text: FileSystemModel.currentPath + "/archive.zip"
                     placeholderText: "archive.zip"
 
                     onAccepted: okButton.clicked()
@@ -176,7 +176,7 @@ Window {
                     Layout.fillWidth: true
                 }
 
-                ArchiveDialogButton {
+                ActionDialogButton {
                     id: okButton
 
                     text: "OK"
@@ -196,7 +196,7 @@ Window {
                     }
                 }
 
-                ArchiveDialogButton {
+                ActionDialogButton {
                     text: "Cancel"
 
                     onClicked: {

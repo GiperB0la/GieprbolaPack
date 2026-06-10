@@ -6,11 +6,14 @@
 		
 		<file>Components/TopMenu/TopMenu.qml</file>
 		<file>Components/TopMenu/TopMenuButton.qml</file>
+		<file>Components/TopMenu/TopMenuPopup.qml</file>
+		<file>Components/TopMenu/TopMenuPopupButton.qml</file>
 
 		<file>Components/ActionToolbar/ActionToolbar.qml</file>
 		<file>Components/ActionToolbar/ActionToolbarButton.qml</file>
 		<file>Components/ActionToolbar/ArchiveDialog.qml</file>
-		<file>Components/ActionToolbar/ArchiveDialogButton.qml</file>
+		<file>Components/ActionToolbar/ExtractDialog.qml</file>
+		<file>Components/ActionToolbar/ActionDialogButton.qml</file>
 
 		<file>Components/PathBar/PathBar.qml</file>
 		<file>Components/PathBar/PathBarButton.qml</file>
@@ -23,6 +26,7 @@
 		<file>Styles/TextField.qml</file>
 		<file>Styles/ComboBox.qml</file>
 		<file>Styles/ConfirmDialog.qml</file>
+		<file>Styles/FolderPathField.qml</file>
 
 		
 		<file>../Resources/Icon.png</file>

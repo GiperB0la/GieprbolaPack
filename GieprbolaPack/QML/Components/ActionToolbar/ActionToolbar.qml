@@ -21,6 +21,18 @@ Rectangle {
         }
     }
 
+    ExtractDialog {
+        id: extractDialog
+
+        onAccepted: function(extractPath) {
+            FileSystemModel.extract_archive(extractPath)
+        }
+
+        onRejected: {
+            console.log("Extract archive canceled")
+        }
+    }
+
     ConfirmDialog {
         id: deleteDialog
 
@@ -47,6 +59,12 @@ Rectangle {
             tooltipText: "Add files to archive"
 
             onClicked: {
+                if (FileSystemModel.selectedFolderCount === 0 &&
+                    FileSystemModel.selectedFileCount === 0) {
+                    FileSystemModel.set_status_text("No files selected")
+                    return
+                }
+
                 archiveDialog.open_dialog()
             }
         }
@@ -57,7 +75,12 @@ Rectangle {
             tooltipText: "Extract files from archive"
 
             onClicked: {
-                console.log("Extract")
+                if (!FileSystemModel.has_selected_archives()) {
+                    FileSystemModel.set_status_text("No archives selected")
+                    return
+                }
+
+                extractDialog.open_dialog()
             }
         }
 
